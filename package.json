@@ -1,0 +1,7 @@
+{
+  "name": "student-recs",
+  "main": "studentrecs.js",
+  "dependencies": {
+    "hogan.js": "^3.0.2"
+  }
+}

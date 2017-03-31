@@ -1,0 +1,112 @@
+{
+  "students": [
+    {
+      "firstname": "Alice",
+      "surname": "jones",
+      "subjects": [
+        "saab",
+        "audi"
+      ],
+      "id": 0
+    },
+    {
+      "firstname": "joe",
+      "surname": "jones",
+      "subjects": "saab",
+      "id": 1
+    },
+    {
+      "firstname": "ewqe",
+      "surname": "qweqwe",
+      "id": 2,
+      "subjects": []
+    },
+    {
+      "firstname": "John",
+      "surname": "Doe",
+      "subjects": [
+        "saab",
+        "opel"
+      ],
+      "id": 3
+    },
+    {
+      "firstname": "asd",
+      "surname": "dsa",
+      "subjects": [
+        "saab"
+      ],
+      "id": 4
+    },
+    {
+      "firstname": "asdsa",
+      "surname": "asdsad",
+      "id": 5,
+      "subjects": []
+    },
+    {
+      "firstname": "fdssdf",
+      "surname": "dsfdsf",
+      "subjects": [
+        "volvo"
+      ],
+      "id": 6
+    },
+    {
+      "firstname": "sadsad",
+      "surname": "asdsad",
+      "subjects": [
+        "saab"
+      ],
+      "id": 7
+    },
+    {
+      "firstname": "aidan",
+      "surname": "reilly",
+      "subjects": [
+        "saab"
+      ],
+      "id": 8
+    },
+    {
+      "firstname": "Aidan",
+      "surname": "Reilly",
+      "subjects": [
+        "saab"
+      ],
+      "id": 9
+    },
+    {
+      "firstname": "jimbo",
+      "surname": "ryan",
+      "id": 10,
+      "subjects": []
+    },
+    {
+      "firstname": "",
+      "surname": "",
+      "id": 11,
+      "subjects": []
+    },
+    {
+      "firstname": "test",
+      "surname": "",
+      "id": 12,
+      "subjects": []
+    },
+    {
+      "firstname": "mic",
+      "surname": "",
+      "id": 13,
+      "subjects": []
+    }
+  ],
+  "subjects": [
+    {
+      "name": "english",
+      "room": "a6",
+      "teacher": "saab",
+      "id": 0
+    }
+  ]
+}

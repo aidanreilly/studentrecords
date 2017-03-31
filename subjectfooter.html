@@ -1,0 +1,33 @@
+<div id="subjects">
+    <a href="" id="addsubjectToggle"> Add Subject </a>
+    <div id="subjectlist">
+    </div>
+    <div id="addSubject">
+        <h1>New Subject</h1>
+        <p>
+        <form method="post" action="/addSubject">
+            Name:<br>
+            <input type="text" name="name">
+            <br>
+            room:<br>
+            <input type="text" name="room">
+            <br>
+            Teacher:
+            <select name="teacher">
+                {{{teachers}}}
+            </select>
+
+            <br>
+            <br><br>
+            <input type="submit">
+        </form>
+    </div>
+</div>
+
+</article>
+
+
+</div>
+
+</body>
+</html>

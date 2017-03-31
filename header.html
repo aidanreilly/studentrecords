@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div.container {
+            width: 100%;
+            border: 1px solid gray;
+        }
+
+        header, footer {
+            padding: 1em;
+            color: white;
+            background-color: black;
+            clear: left;
+            text-align: center;
+        }
+
+        nav {
+            float: left;
+            max-width: 160px;
+            margin: 0;
+            padding: 1em;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul a {
+            text-decoration: none;
+        }
+
+        article {
+            margin-left: 170px;
+            border-left: 1px solid gray;
+            padding: 1em;
+            overflow: hidden;
+        }
+
+
+         table {
+             font-family: arial, sans-serif;
+             border-collapse: collapse;
+             width: 100%;
+         }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+
+        function deleteStudent(id){
+            $('#studentid').val(id);
+            // submit the form
+           $('#deletestudent')[0].submit();
+        }
+        function editStudent(id){
+            $('#editstudentid').val(id);
+            // submit the form
+            $('#editstudent')[0].submit();
+        }
+        function deleteSubject(id){
+            $('#subjectid').val(id);
+            // submit the form
+            $('#deletesubject')[0].submit();
+        }
+        $(document).ready(function() {
+            $("#addSubject").hide();
+            $("#addStudent").hide();
+            $("#addsubjectToggle").on('click', function(e){
+                $("#addSubject").toggle();
+                e.preventDefault();
+
+            });
+            $("#addstudentToggle").on('click', function(e){
+                $("#addStudent").toggle();
+                e.preventDefault();
+
+            });
+        });
+    </script>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Student Records</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li> <a href="/getStudents">ShowStudents</a> </li>
+            <li><a href="/getSubjects">ShowSubjects</a></li>
+
+        </ul>
+    </nav>
+
+    <article>
+        <form id="deletestudent" method="post" action="/deleteStudent">
+            <input id="studentid" type="hidden" name="id" value="">
+        </form>
+        <form id="deletesubject" method="post" action="/deleteSubject">
+            <input id="subjectid" type="hidden" name="id" value="">
+        </form>
+        <form id="editstudent" method="post" action="/editStudent">
+            <input id="editstudentid" type="hidden" name="id" value="">
+        </form>
+
+
+
+
+
+

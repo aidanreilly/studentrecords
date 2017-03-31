@@ -1,0 +1,30 @@
+<div id="editstudents">
+
+    <div id="editStudent">
+        <h1>Edit Student</h1>
+        <p>
+        <form method="post" action="/updateStudent">
+        <input id="studentid" type="hidden" name="id" value="{{{id}}}">
+            First Name:<br>
+            <input type="text" name="firstname" value="{{{firstname}}}">
+            <br>
+            Surname:<br>
+            <input type="text" name="surname" value="{{{surname}}}">
+            <br>
+            Subjects (Multiple Selection):
+            <select name="subjects" value="" multiple>
+                {{{subjects}}}
+            </select>
+            <br><br>
+            <input type="submit">
+        </form>
+    </div>
+</div>
+
+</article>
+
+
+</div>
+
+</body>
+</html>
