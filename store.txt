@@ -99,6 +99,20 @@
       "surname": "",
       "id": 13,
       "subjects": []
+    },
+    {
+      "firstname": "first",
+      "surname": "surname",
+      "subjects": [
+        "opel"
+      ],
+      "id": 14
+    },
+    {
+      "firstname": "another",
+      "surname": "",
+      "id": 15,
+      "subjects": []
     }
   ],
   "subjects": [
