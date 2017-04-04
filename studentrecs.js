@@ -15,7 +15,9 @@ var hogan = require('hogan.js');
 var cache = {};
 var thestore = {
     students: [],
-    subjects: []
+    subjects: [],
+    teachers: [],
+    grades: []
 };
 
 //prints the URL to the console
@@ -24,12 +26,12 @@ console.log("running on http://localhost:3000/")
 //The store var is a text file stored in the root dir. 
 //It contains the json that maps to the student records.
 //The two header vars set the column headers that are used for the two arrays, 
-//students and subjects in the store var - a json "database" basically.
+//students and subjects in the store object - a json "database" basically.
 var store = "./store.txt";
 var Studentheaders = [
-    "first Name", "Second Name","Operation"];
+    "First Name", "Second Name", "Subjects", "Operation"];
 var Subjectheaders = [
-    "Name","Teacher","Operation"];
+    "Name","Teacher", "Room", "Operation"];
 
 //The loadOrInitializeArray function takes the var store as an input.
 //The http server var processes requests and responses.
@@ -55,12 +57,11 @@ var server = http.createServer(function (req, res) {
         if (url == "/addStudent") {
             var body = '';
             //why not var body = [];?
-            console.log("add Student ");    
-            //https://nodejs.org/en/docs/guides/anatomy-of-an-http-transaction/
+            console.log("add Student ");   
             req.on('data', function (data) {
                 body += data;
             });
-//once the request ends, the qs module parses the body of the POST addStudent request into a var called student
+//once the request ends, the qs module parses the body of the POST addStudent request into the student object
 // print to  the console, and print the student var to the console.
 //the unique id for the student is obtained by getting the length value of the students array   
             req.on('end', function () {
@@ -110,14 +111,24 @@ var server = http.createServer(function (req, res) {
             });
             // on completing the request, print the entire body of the request to the console
             req.on('end', function () {
-                console.log(body);
+                var subject = qs.parse(body);
+                console.log('body '+body);
+                console.log(subject);
+                subject.id = thestore.subjects.length;
 
                 // TODO parse subject and add subject object into thestore.subjects
                 //storeTheStore function adds the subjects to the json txt file.
+
+                //now we stringify the message using the JSON stringify method and post it to the console.
+                console.log('subject: '+JSON.stringify(subject, null, 2));
+                thestore.subjects.push(subject);
+                //storeTheStore function adds the student record to the json txt file.
+
+
                 storeTheStore(store);
                 // launch the showpage function, has a request and response  param, 
                 //a  displaySubject method, and an included footer file 
-                showPage(req, res, displaySubjects(), "./subjectfooter.html");
+                showPage(req, res, displaySubjects(true), "./subjectfooter.html");
 
 
 
@@ -248,11 +259,10 @@ function loadOrInitializeArray(file) {
 //evaluate the data string and parse it into thestore  students and subjects arrays.
             thestore = JSON.parse(data || '{'  +
                 '"students":[],'+
-                '"subjects" :[]}');
-
+                '"subjects":[],'+
+                '"teachers":[],'+
+                '"grades" :[]}');
         }
-
-
     });
 }
 
@@ -270,27 +280,33 @@ function displayStudents(doEdit,student) {
         out += '<th >' + Studentheaders[i] + '</th>';
     }
     out += "</tr>";
-    out+= '<td> hello </td> <td> world </td>';
+//put the store values into the table
     for (i = 0; i < thestore.students.length; i++) {
-      // TODO Output Students
-        out+= '<td>'+thestore.students[i].firstname+'</td>'
-    '<td>'+'<button onclick="deleteStudent('+
-    thestore.students[i].id+
-    ')">Delete</button>'
-    '</td>';
+    	out += '<tr style="font-size: 20px;" >';
+	out +='<td>'+thestore.students[i].firstname+'</td>'
+	out +='<td>'+thestore.students[i].surname+'</td>'
+	out +='<td>'+thestore.students[i].subjects+'</td>'
+	out+= '<td><button onclick="editStudent('+thestore.students[i].id+')">Edit</button><button onclick="deleteStudent('+thestore.students[i].id+')">Delete</button></td>'
+    	out += "</tr>";
+
+
+
+     // TODO Output Studthestoreents
+     //   out+= '<td>'+thestore.students[i].firstname+'</td>'
+    //'<td>'+'<button onclick="deleteStudent('+
+    //thestore.students[i].id+
+    //')">Delete</button>'
+    //'</td>';
     }
     out += "</table>";
 //the template  var is buit by fs readfile which takes the input from studentfooter.html
     var template =  fs.readFileSync("./studentfooter.html", 'utf8');
-    var context = {subjects: '<option value="volvo">Volvo</option>'+
-
+    var context = {subjects: '<option value="maths">Maths</option>'+
         // TOTO output student subjects
-    '<option value="saab">Saab</option>'+
-    '<option value="opel">Opel</option>'+
-    '<option value="audi">Audi</option>'+
-        '<option value="saab">Saab</option>'+
-            '<option value="opel">Opel</option>'+
-        '<option value="audi">Audi</option>'};
+    '<option value="english">English</option>'+
+    '<option value="irish">Irish</option>'+
+        '<option value="french">French</option>'+
+            '<option value="latin">Latin</option>'};
     var template = hogan.compile(template);
     //hogan compiles the template for output to the browser
     out+=template.render(context);
@@ -313,10 +329,10 @@ function displaySubjects() {
     }
     out += "</table>";
     var template =  fs.readFileSync("./subjectfooter.html", 'utf8');
-    var context = {teachers: '<option value="volvo">Volvo</option>'+
-    '<option value="saab">Saab</option>'+
-        '<option value="opel">Opel</option>'+
-        '<option value="audi">Audi</option>'};
+    var context = {teachers: '<option value="Mr. T">Mr. T</option>'+
+    '<option value="Ms. Q">Ms. Q</option>'+
+        '<option value="Mr. O">Mr. O</option>'+
+        '<option value="Mrs. P">Mrs. P</option>'};
     var template = hogan.compile(template);
     out+=template.render(context);
     console.log(out);

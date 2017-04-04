@@ -64,54 +64,26 @@
       "firstname": "aidan",
       "surname": "reilly",
       "subjects": [
-        "saab"
+        "english",
+        "irish",
+        "french"
       ],
       "id": 8
     },
     {
-      "firstname": "Aidan",
-      "surname": "Reilly",
+      "firstname": "liam",
+      "surname": "maloney",
       "subjects": [
-        "saab"
+        "english",
+        "irish",
+        "french"
       ],
       "id": 9
     },
     {
-      "firstname": "jimbo",
-      "surname": "ryan",
-      "id": 10,
-      "subjects": []
-    },
-    {
       "firstname": "",
       "surname": "",
-      "id": 11,
-      "subjects": []
-    },
-    {
-      "firstname": "test",
-      "surname": "",
-      "id": 12,
-      "subjects": []
-    },
-    {
-      "firstname": "mic",
-      "surname": "",
-      "id": 13,
-      "subjects": []
-    },
-    {
-      "firstname": "first",
-      "surname": "surname",
-      "subjects": [
-        "opel"
-      ],
-      "id": 14
-    },
-    {
-      "firstname": "another",
-      "surname": "",
-      "id": 15,
+      "id": 10,
       "subjects": []
     }
   ],
@@ -121,6 +93,12 @@
       "room": "a6",
       "teacher": "saab",
       "id": 0
+    },
+    {
+      "name": "subject",
+      "room": "",
+      "teacher": "Mr. T",
+      "id": 1
     }
   ]
 }
