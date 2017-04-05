@@ -281,21 +281,17 @@ function displayStudents(doEdit,student) {
     }
     out += "</tr>";
 //put the store values into the table
+//the editStudent and deleteStudent functions are defined in header.h
     for (i = 0; i < thestore.students.length; i++) {
     	out += '<tr style="font-size: 20px;" >';
 	out +='<td>'+thestore.students[i].firstname+'</td>'
 	out +='<td>'+thestore.students[i].surname+'</td>'
 	out +='<td>'+thestore.students[i].subjects+'</td>'
-	out+= '<td><button onclick="editStudent('+thestore.students[i].id+')">Edit</button><button onclick="deleteStudent('+thestore.students[i].id+')">Delete</button></td>'
-    	out += "</tr>";
-
-
-
+    	out += '<td><button onclick="editStudent('+thestore.students[i].id+')">Edit</button> <button onclick="deleteStudent('+thestore.students[i].id+')">Delete</button></td>'
+//see jquery bits, how to fit the plumbing togwther?!!
      // TODO Output Studthestoreents
      //   out+= '<td>'+thestore.students[i].firstname+'</td>'
-    //'<td>'+'<button onclick="deleteStudent('+
-    //thestore.students[i].id+
-    //')">Delete</button>'
+    //'<td>'+'<button onclick="deleteStudent('+thestore.students[i].id+')">Delete</button>'
     //'</td>';
     }
     out += "</table>";
