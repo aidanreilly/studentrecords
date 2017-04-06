@@ -116,8 +116,25 @@ var server = http.createServer(function (req, res) {
                 console.log(subject);
                 subject.id = thestore.subjects.length;
 
-                // TODO parse subject and add subject object into thestore.subjects
-                //storeTheStore function adds the subjects to the json txt file.
+                //parse subject and add subject object into thestore.subjects - not sure this is working
+
+                if (thestore.subjects === undefined) {
+                    thestore.subjects = [];
+                    console.log("subjects is undefined");
+                }
+                else
+                // Convert the subjects variable into an Array if there is only one subject
+                if  (!(thestore.subjects instanceof Array)) {
+                    //if thestore.subjects is an array and if the subjects array is not null, 
+                    //then push the subjects into the array 
+                    if (thestore.subjects != null)
+                        thestore.subjects = [thestore.subjects];
+                    else {
+                        console.log("student subjects is null");
+                        thestore.subjects = [];
+                    }
+                }
+                // added the modified students bit above.
 
                 //now we stringify the message using the JSON stringify method and post it to the console.
                 console.log('subject: '+JSON.stringify(subject, null, 2));
@@ -297,8 +314,11 @@ function displayStudents(doEdit,student) {
     out += "</table>";
 //the template  var is buit by fs readfile which takes the input from studentfooter.html
     var template =  fs.readFileSync("./studentfooter.html", 'utf8');
-    var context = {subjects: '<option value="maths">Maths</option>'+
-        // TOTO output student subjects
+    var context = {subjects: 
+//TODO need to loop through this to build the options list
+
+        '<option value="maths">Maths</option>'+
+        // TODO output student subjects
     '<option value="english">English</option>'+
     '<option value="irish">Irish</option>'+
         '<option value="french">French</option>'+
@@ -312,18 +332,27 @@ function displayStudents(doEdit,student) {
 //defines the displaySubjects function  
 //similiarly to the Students above
 //the html is appended to the out var, and rendered to the browser with hogan
-function displaySubjects() {
-    var out = "<h1> Subjects</h1><table border=1 width=100%>";
+function displaySubjects(doEdit,subject) {
+    var out = "<h1>Subjects</h1><table border=1 width=100%>";
     var i;
     out += '<tr style="font-size: 20px;" >';
     for (i = 0; i < Subjectheaders.length; i++) {
         out += '<th >' + Subjectheaders[i] + '</th>';
     }
     out += "</tr>";
+//put the store values into the table
+//the editSubject and deleteSubject functions are defined in header.h TODO TODO
     for (i = 0; i < thestore.subjects.length; i++) {
-
+        out += '<tr style="font-size: 20px;" >';
+    out +='<td>'+thestore.subjects[i].name+'</td>'
+    out +='<td>'+thestore.subjects[i].room+'</td>'
+    out +='<td>'+thestore.subjects[i].teacher+'</td>'
+        out += '<td><button onclick="editSubject('+thestore.subjects[i].id+')">Edit</button> <button onclick="deleteSubject('+thestore.subjects[i].id+')">Delete</button></td>'
     }
     out += "</table>";
+
+//copied the above table from students
+
     var template =  fs.readFileSync("./subjectfooter.html", 'utf8');
     var context = {teachers: '<option value="Mr. T">Mr. T</option>'+
     '<option value="Ms. Q">Ms. Q</option>'+
