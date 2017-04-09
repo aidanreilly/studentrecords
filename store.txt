@@ -1,127 +1,117 @@
 {
   "students": [
     {
-      "firstname": "Alice",
-      "surname": "jones",
+      "firstname": "Aidan",
+      "surname": "Reilly",
       "subjects": [
-        "saab",
-        "audi"
+        "english"
+      ],
+      "grades": [
+        91
       ],
       "id": 0
     },
     {
-      "firstname": "joe",
-      "surname": "jones",
-      "subjects": "saab",
+      "firstname": "Nadia",
+      "surname": "Reilly",
+      "subjects": [
+        "maths",
+        "latin"
+      ],
+      "grades": [
+        42,
+        89
+      ],
       "id": 1
     },
     {
-      "firstname": "ewqe",
-      "surname": "qweqwe",
-      "id": 2,
-      "subjects": []
+      "firstname": "ylleir",
+      "surname": "nadia",
+      "subjects": [
+        "english"
+      ],
+      "grades": [
+        99
+      ],
+      "id": 2
     },
     {
-      "firstname": "John",
-      "surname": "Doe",
+      "firstname": "big",
+      "surname": "billy",
       "subjects": [
-        "saab",
-        "opel"
+        "english",
+        "maths",
+        "latin"
+      ],
+      "grades": [
+        41,
+        34,
+        78
       ],
       "id": 3
     },
     {
-      "firstname": "asd",
-      "surname": "dsa",
+      "firstname": "liam",
+      "surname": "flynn",
       "subjects": [
-        "saab"
+        "english",
+        "latin"
+      ],
+      "grades": [
+        69,
+        23
       ],
       "id": 4
     },
     {
-      "firstname": "asdsa",
-      "surname": "asdsad",
-      "id": 5,
-      "subjects": []
-    },
-    {
-      "firstname": "fdssdf",
-      "surname": "dsfdsf",
+      "firstname": "Helen",
+      "surname": "Moakley",
       "subjects": [
-        "volvo"
+        "maths"
       ],
-      "id": 6
-    },
-    {
-      "firstname": "sadsad",
-      "surname": "asdsad",
-      "subjects": [
-        "saab"
+      "grades": [
+        54
       ],
-      "id": 7
-    },
-    {
-      "firstname": "aidan",
-      "surname": "reilly",
-      "subjects": [
-        "english",
-        "irish",
-        "french"
-      ],
-      "id": 8
-    },
-    {
-      "firstname": "liam",
-      "surname": "maloney",
-      "subjects": [
-        "english",
-        "irish",
-        "french"
-      ],
-      "id": 9
-    },
-    {
-      "firstname": "",
-      "surname": "",
-      "id": 10,
-      "subjects": []
-    },
-    {
-      "firstname": "liam",
-      "surname": "mial",
-      "subjects": [
-        "english"
-      ],
-      "id": 11
-    },
-    {
-      "firstname": "aidan",
-      "surname": "reilly",
-      "subjects": [
-        "english",
-        "subject",
-        "pig"
-      ],
-      "id": 12
+      "id": 5
     }
   ],
   "subjects": [
     {
       "name": "english",
-      "room": "a6",
-      "teacher": "saab",
+      "room": "A6",
+      "teacher": "Mary",
       "id": 0
     },
     {
-      "name": "subject",
-      "room": "",
-      "teacher": "Mr. T",
+      "name": "maths",
+      "room": "B4",
+      "teacher": "Mary",
       "id": 1
     },
     {
-      "name": "pig LATIN",
-      "room": "",
-      "teacher": "Mr. T",
+      "name": "latin",
+      "room": "C1",
+      "teacher": "Joe",
+      "id": 2
+    },
+    {
+      "name": "biology",
+      "room": "D2",
+      "teacher": "John",
+      "id": 3
+    }
+  ],
+  "teachers": [
+    {
+      "name": "John",
+      "id": 0
+    },
+    {
+      "name": "Joe",
+      "id": 1
+    },
+    {
+      "name": "Mary",
       "id": 2
     }
   ]

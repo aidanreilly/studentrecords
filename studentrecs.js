@@ -1,18 +1,35 @@
-//Each var element instantiates the various node components for use in the node application.
-//http module is for sending and receiving http traffic in the node application
-//qs  is for parsing and formatting URL query strings
-//fs is for file i/o operations
-//path is for manipulating file paths, finding the basename, file type, etc.
-//hogan.js is a tempalting engine that simlifies html development
-//the cache var is instantiated here so that it can store content later in the program
-//thestore is a "braced" complex variable with two arrays, students and subjects
+/**
+ * @file main applcation file for the student records node.js application
+ * @author Aidan Reilly 
+ */
 
+/**
+ * http module is for sending and receiving http traffic in the node application
+ */
 var http = require('http');
+/**
+ * qs  is for parsing and formatting URL query strings
+ */
 var qs = require('querystring');
+/**
+ * fs is for file i/o operations
+ */
 var fs = require('fs');
+/**
+ * path is for manipulating file paths, finding the basename, file type, etc.
+ */
 var path = require('path');
+/**
+ * hogan.js is a tempalting engine that simlifies html development
+ */
 var hogan = require('hogan.js');
+/**
+ * the cache var is instantiated here so that it can store content later in the program
+ */
 var cache = {};
+/**
+ * thestore is a "braced" complex variable with two arrays, students and subjects
+ */
 var thestore = {
     students: [],
     subjects: [],
@@ -20,65 +37,78 @@ var thestore = {
     grades: []
 };
 
-//prints the URL to the console
 console.log("running on http://localhost:3000/")
 
-//The store var is a text file stored in the root dir. 
-//It contains the json that maps to the student records.
-//The two header vars set the column headers that are used for the two arrays, 
-//students and subjects in the store object - a json "database" basically.
+//
+//
+
+/**
+ * The store var is a json format text file stored in the root dir. It contains the json that maps to the student records.
+ * @type {String}
+ */
 var store = "./store.txt";
+/**
+ * The two header vars set the column headers that are used for the two arrays, students and subjects in the store object - a json "database" basically.
+ * @type {Array}
+ */
 var Studentheaders = [
-    "First Name", "Second Name", "Subjects", "Operation"
+    "First Name", "Second Name", "Subjects - Grades", "Operation"
 ];
 var Subjectheaders = [
     "Name", "Teacher", "Room", "Operation"
 ];
 
-//The loadOrInitializeArray function takes the var store as an input.
-//The http server var processes requests and responses.
-//the createServer method creates the server and sets it up to process requests and responses
-// The url var is parsed from the http req input
-//push the request and URL and the request method to the console
-//the filePath var is initiated as false. 
-//the main body of the application is set up in the server variable here.
+/**
+ * The loadOrInitializeArray function takes the var store as an input.
+ */
 loadOrInitializeArray(store);
+/**
+ <p>The http server var processes requests and responses. The createServer method creates the server and sets it up to process requests and responses. The url var is parsed from the http req input. The request and URL is pushed to the console. The main body of the application is set up in the server object here.
+ 
+  <p>If the method is a POST method and has /addStudent encoded in the URL, print to the console, process the req request. The request on method processes the request body, binds it to the POST event.
+  
+  <p>The var body quotation is used to construct the URL starting with  a quotation to open the concatenated data from the POST request.  
+ 
+  <p>Once the request ends, the qs module parses the body of the POST addStudent request into the student object and prints to  the console. and print the student var to the console.
+
+ <p>The unique id for the student is obtained by getting the length value of the students array   
+
+ <p>The subjects attribute can be undefined if the user does not select a subject for the student.
+
+ <p> The message is then stringified and pushed to the console and the store.
+
+ <p> The various methods POST methods print to the console and then process the req request, pushing the content to thestore and then regenerating the updated html in the browser.
+ */
 var server = http.createServer(function(req, res) {
     var url = req.url;
     console.log('request ' + url + ' method ' + req.method);
+    /**
+     The filePath var is initiated as false. 
+     * @type {Boolean}
+     */
     var filePath = false;
-
-    //if the method is a POST method and has /addStudent encoded in the URL, 
-    //print to the console, process the req request
-    //the request on method processes the request body, 
-    //binds it to the POST event
-    //the var body quotation is used to construct the URL starting with  a quoatation
-    // to open the concatenated data from the POST request  
 
     if (req.method == 'POST') {
         if (url == "/addStudent") {
             var body = '';
-            //why not var body = [];?
             console.log("add Student ");
             req.on('data', function(data) {
                 body += data;
             });
-            //once the request ends, the qs module parses the body of the POST addStudent request into the student object
-            // print to  the console, and print the student var to the console.
-            //the unique id for the student is obtained by getting the length value of the students array   
+
             req.on('end', function() {
                 var student = qs.parse(body);
                 console.log('body ' + body);
                 console.log(student);
                 student.id = thestore.students.length;
 
-                // The subjects attribute can be undefined if the user does not
-                // select a subject for the student.
+
                 if (student.subjects === undefined) {
                     student.subjects = [];
                     console.log("student subjects is undefined");
                 } else
-                // Convert the subjects variable into an Array if there is only one subject
+
+                 //Convert the subjects variable into an Array if there is only one subject
                 if (!(student.subjects instanceof Array)) {
                     if (student.subjects != null)
                         student.subjects = [student.subjects];
@@ -87,11 +117,12 @@ var server = http.createServer(function(req, res) {
                         student.subjects = [];
                     }
                 }
-                //now we stringify the message using the JSON stringify method and post it to the console.
+                //now we stringify the message using the JSON stringify method and post it to the console and push it to the store.
                 console.log('student: ' + JSON.stringify(student, null, 2));
                 thestore.students.push(student);
                 //storeTheStore function adds the student record to the json txt file.
                 storeTheStore(store);
+                //showpage method pushes the studentfooter to the browser.
                 showPage(req, res, displayStudents(true), "./studentfooter.html");
 
 
@@ -99,7 +130,7 @@ var server = http.createServer(function(req, res) {
         }
 
         //if the method is a POST method and has /addSubject encoded in the URL, 
-        //print to the console, process the req request
+        //print to the console, process the req request to the store
         //the request on method processes the request body, 
         //binds it to the POST event
         //the var body quotation is used to construct the URL starting with  a quoatation
@@ -118,7 +149,6 @@ var server = http.createServer(function(req, res) {
                 subject.id = thestore.subjects.length;
 
                 //parse subject and add subject object into thestore.subjects - not sure this is working
-
                 if (thestore.subjects === undefined) {
                     thestore.subjects = [];
                     console.log("subjects is undefined");
@@ -136,11 +166,10 @@ var server = http.createServer(function(req, res) {
                 }
                 // added the modified students bit above.
 
-                //now we stringify the message using the JSON stringify method and post it to the console.
+                //now we stringify the message using the JSON stringify method and post it to the console and push to thestore.
                 console.log('subject: ' + JSON.stringify(subject, null, 2));
                 thestore.subjects.push(subject);
                 //storeTheStore function adds the student record to the json txt file.
-
 
                 storeTheStore(store);
                 // launch the showpage function, has a request and response  param, 
@@ -212,6 +241,11 @@ var server = http.createServer(function(req, res) {
         console.log("getstudents");
         showPage(req, res, displayStudents(), "./studentfooter.html");
     }
+    //TODO: added this to push grade work to the edit page with a gradeStudent.html footer
+    else if (url == "/gradeStudent") {
+        console.log("getstudents");
+        showPage(req, res, displayStudents(), "./gradeStudent.html");
+    }
 
     //if the url is getSubjects, print to the log 
     //show page function  display the subjects and append the footer html page
@@ -220,37 +254,30 @@ var server = http.createServer(function(req, res) {
         showPage(req, res, displaySubjects(), "./subjectfooter.html");
     } else
         showPage(req, res, displayStudents(), "./studentfooter.html");
-
-
 });
 
 //listen on port 3000
+/**
+ * applcation listens on port 3000
+ */
 server.listen(3000);
 
-//showPage function  is called whenever a reqest or response is triggered.
-// the res.writehead method posts response code 200, has a content type of text/html
-//print show page on the console
-//the data var is populated by the filesystem module.
-//the readfileSync method of the fs module
+ /**showPage function returns status 200 (OK) and pushes the html to the browser. showPage function  is called whenever a reqest or response is triggered.
+ *The data variable is populated with the contents of the header.html using fs. Str is added to the data var and saved to the data var which is parsed by the ReadFileSync file read method, encoded in utf 8. Res.end sends the data.
+ */
 function showPage(req, res, str, footer) {
     res.writeHead(
         200, { "content-type": 'text/html' }
     );
-    //returns the page to the browser
-    //the data variable is populated with the contents of the header.html 
-    // which is parsed by the ReadFileSync file read method, encoded in utf 8.
     console.log("showpage");
     data = fs.readFileSync("./header.html", 'utf8');
     //str is added to the data var and saved to the data var 
     data += str;
-    //the res response ends when the res.end and sends the data without specifying a content-type  
     res.end(data);
 }
 //define the storeTheStore function which takes file as a parameter  
+/** the storeTheStore method pushes the students records to the JSON store.txt. The fs writeFile method stringifys the json thestore complex var in utf8, and can also pass an error to the callback function. **/
 function storeTheStore(file) {
-    //the fs writeFile method stringifys
-    // the json thestore complex var in utf8, 
-    // and can also pass an error to the callback function
     fs.writeFile(file, JSON.stringify(thestore, null, 2), 'utf8', function(err) {
         //if an err is experienced, throw the err exception
         if (err) throw err;
@@ -259,11 +286,9 @@ function storeTheStore(file) {
     });
 }
 
-//define the loadOrInitializeArray function which takes a file parameter.
-//fs checks if the file exists, if it does, read the file encoded as UTF8
-// to the data var.
-//then, turn the data var into a string
-
+/**
+The loadOrInitializeArray function is used to read the JSON into thestore. It evaluate the data string and parse it into thestore  students and subjects arrays. fs checks if the file exists, if it does, read the file encoded as UTF8 to the data var. Then, turn the data var into a string.
+ */
 function loadOrInitializeArray(file) {
     fs.exists(file, function(exists) {
         if (exists) {
@@ -280,12 +305,10 @@ function loadOrInitializeArray(file) {
     });
 }
 
-//defines the displayStudents function, takes doEdit and student params
-//the out var encodes the header when output to html
-//the for loop builds the table.
-// iterate over i for the number of studentheader elements
-//create the <th> entries in the table and populate with the values of each studentheader entry
-//do the same for students and id
+
+/** 
+The displayStudents function, takes doEdit and student params. The out var encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of studentheader elements and create the <th> entries in the table and populate with the values of each studentheader entry. It does the same for students and ids. Hogan.js is used to render the output as html.
+ */
 function displayStudents(doEdit, student) {
     var out = "<h1> Students</h1><table border=1 width=100%>";
     var i;
@@ -295,14 +318,19 @@ function displayStudents(doEdit, student) {
     }
     out += '</tr>';
     //put the store values into the table
-    //the editStudent and deleteStudent functions are defined in header.h
     for (i = 0; i < thestore.students.length; i++) {
         out += '<tr style="font-size: 20px;" >';
         out += '<td>' + thestore.students[i].firstname + '</td>'
         out += '<td>' + thestore.students[i].surname + '</td>'
-        out += '<td>' + thestore.students[i].subjects + '</td>'
-        out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button></td>'
-            //see jquery bits, how to fit the plumbing togwther?!!
+        out += '<td><ol>'
+        //display the results in an ordered list.
+        j = 0;
+        for (j = 0; j < thestore.students[i].subjects.length; j++) {
+            out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
+        }
+        out += '</td></ol>'
+        out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button> <button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)</button></td>'
+            //see jquery bits, how to fit the plumbing together?!!
             // TODO Output Studthestoreents
             //   out+= '<td>'+thestore.students[i].firstname+'</td>'
             //'<td>'+'<button onclick="deleteStudent('+thestore.students[i].id+')">Delete</button>'
@@ -318,14 +346,21 @@ function displayStudents(doEdit, student) {
     for (i = 0; i < thestore.subjects.length; i++) {
         subjectsList += '<option value=' + thestore.subjects[i].name + '>' + thestore.subjects[i].name + '</option>'
     }
-    var context = {subjects: subjectsList};
+    var context = { subjects: subjectsList };
     var template = hogan.compile(template)
     out += template.render(context);
     return out;
 }
+
+
 //defines the displaySubjects function  
 //similiarly to the Students above
 //the html is appended to the out var, and rendered to the browser with hogan
+
+/** 
+The displaySubjects function works similiarly to the display Students function. The out var encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of subjectheader elements and create the <th> entries in the table and populate with the values of each subjectheader entry. It does the same for subjects and ids. Hogan.js is used to render the output as html.
+ */
+
 function displaySubjects(doEdit, subject) {
     var out = "<h1>Subjects</h1><table border=1 width=100%>";
     var i;
@@ -339,42 +374,44 @@ function displaySubjects(doEdit, subject) {
     for (i = 0; i < thestore.subjects.length; i++) {
         out += '<tr style="font-size: 20px;" >';
         out += '<td>' + thestore.subjects[i].name + '</td>'
-        out += '<td>' + thestore.subjects[i].room + '</td>'
         out += '<td>' + thestore.subjects[i].teacher + '</td>'
-        out += '<td><button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit</button> <button onclick="deleteSubject(' + thestore.subjects[i].id + ')">Delete</button></td>'
+        out += '<td>' + thestore.subjects[i].room + '</td>'
+        out += '<td><button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit</button> <button onclick="deletesubject(' + thestore.subjects[i].id + ')">Delete</button></td>'
     }
     out += "</table>";
 
     //copied the above table from students
 
     var template = fs.readFileSync("./subjectfooter.html", 'utf8');
-    var context = {
-        teachers: '<option value="Mr. T">Mr. T</option>' +
-            '<option value="Ms. Q">Ms. Q</option>' +
-            '<option value="Mr. O">Mr. O</option>' +
-            '<option value="Mrs. P">Mrs. P</option>'
-    };
-    var template = hogan.compile(template);
+    var teachersList;
+    //For loop to display all the teacher records in the teacher array
+    //This works by reading the subjectfooter into memory
+    //and for every teacher record in the store, putting it into a hogan template, compiling it, and pushing it to the browser using out and rendering the template.
+    for (i = 0; i < thestore.teachers.length; i++) {
+        teachersList += '<option value=' + thestore.teachers[i].name + '>' + thestore.teachers[i].name + '</option>'
+    }
+    var context = { teachers: teachersList };
+    var template = hogan.compile(template)
     out += template.render(context);
-    console.log(out);
     return out;
 }
 
 //404 function for typos in the URL, etc
+/** send404 is pushed to the browser when a request is not found**/
 function send404(response) {
     console.log("404");
     response.writeHead(404, { 'Content-Type': 'text/plain' });
     response.write('Error 404: resource not found.');
     response.end();
 }
-//the sendFile function  writes the file content to the browser http response
+/** the sendFile function  writes the file content to the browser http response **/
 function sendFile(response, filePath, fileContents) {
     console.log("send file" + filePath);
     console.log(fileContents);
     response.write(fileContents);
 }
 
-//if the page exists in the browser cache, server that before fetching from server
+/** The serveStatic function checks to see if the page is available from cache -  if it exists in the browser cache, before fetching from server**/
 function serveStatic(response, cache, absPath) {
     //cached in memory
     if (cache[absPath]) {
