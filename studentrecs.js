@@ -195,7 +195,7 @@ var server = http.createServer(function(req, res) {
             });
             //req.on binds the URL event to the object passed in the URL when the end event is triggered
             req.on('end', function() {
-                console.log(body);
+                console.log('body contains ' + body);
                 //querystring parser parses the body of the url body
                 var obj = qs.parse(body);
                 console.log('body ' + body);
@@ -205,7 +205,7 @@ var server = http.createServer(function(req, res) {
                 storeTheStore(store);
                 // launch the showpage function, has a request and response  param, 
                 //a  displayStudents method, and an included footer file 
-                showPage(req, res, displayStudents(), "./studentfooter.html");
+                showPage(req, res, displayStudents(true), "./studentfooter.html");
             });
 
         } else if (url == "/editStudent") {
@@ -225,24 +225,22 @@ var server = http.createServer(function(req, res) {
                 storeTheStore(store);
                 // launch the showpage function, has a request and response  param, 
                 //a  displayStudents method, and an included footer file 
-                showPage(req, res, displayStudents(), "./studentEdit.html");
+                showPage(req, res, displayStudents(true), "./studentEdit.html");
             });
-
-        }
-
-
-        //if the method is a POST method and has /deleteSubject encoded in the URL, 
-        //print to the console, process the req request
-        //the request on method processes the request body, 
-        //binds it to the POST event
-        //the var body quotation is used to construct the URL starting with  a quotation
-        // to open the concatenated data from the POST request  
-        else if (url == "/deleteSubject") {
+        } else if (url == "/deleteSubject") {
             var body = '';
             console.log("delete subject ");
             req.on('data', function(data) {
                 body += data;
             });
+
+
+            //if the method is a POST method and has /deleteSubject encoded in the URL, 
+            //print to the console, process the req request
+            //the request on method processes the request body, 
+            //binds it to the POST event
+            //the var body quotation is used to construct the URL starting with  a quotation
+            // to open the concatenated data from the POST request  
 
 
             //parse the /deleteSubject request
@@ -274,9 +272,7 @@ var server = http.createServer(function(req, res) {
     else if (url == "/getSubjects") {
         console.log("getSubjects");
         showPage(req, res, displaySubjects(true), "./subjectfooter.html");
-    } 
-
-    else if (url == "/editSubject") {
+    } else if (url == "/editSubject") {
         console.log("editSubjects");
         showPage(req, res, displaySubjects(true), "./subjectfooter.html");
     } else
@@ -359,7 +355,7 @@ function displayStudents(doEdit, student) {
         }
         out += '</td></ol>'
             //out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button> <button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)</button></td>'
-        out += '<td><form method="deleteStudent" action="/deleteStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="editStudent" action="/editStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></form><form method="gradeStudent" action="/gradeStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Add Grade(s)</button>' + '</form></td>'
+        out += '<td><form method="post" action="/deleteStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="post" action="/editStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></form><form method="post" action="/gradeStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Add Grade(s)</button>' + '</form></td>'
             //see jquery bits, how to fit the plumbing together?!!
             // TODO make this work - crai
     }
@@ -398,7 +394,7 @@ function displaySubjects(doEdit, subject) {
         out += '<td>' + thestore.subjects[i].name + '</td>'
         out += '<td>' + thestore.subjects[i].teacher + '</td>'
         out += '<td>' + thestore.subjects[i].room + '</td>'
-        out += '<td><form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></td>'
+        out += '<td><form method="post" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="post" action="/editSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></td>'
     }
     out += "</table>";
 
@@ -477,8 +473,6 @@ function deleteStudent(doEdit, student) {
  editSubject function should pull the Subject from the store.txt, push the subject details to editable fields, and then allow the user to modify and resubmit. I couldn't get this working. My plan was to modify the addStudents function. Upon calling the function, the editSubject.html footer is displayed with the student details pre-populated in the Edit Student fields. The user can then edit the various values, and then submit the changes in the same way that a student is added. The form fields are extracted from the store.txt using jquery and populated on the page using the unique subject id obtained from the onclick action of the button on the getSubjects page.
  */
 function editSubject(doEdit, student) {
-    console.log("editSubject");
-
     var out = "<h1>Subjects</h1><table border=1 width=100%>";
     var i;
     out += '<tr style="font-size: 20px;" >';
@@ -492,14 +486,17 @@ function editSubject(doEdit, student) {
         out += '<td>' + thestore.subjects[i].name + '</td>'
         out += '<td>' + thestore.subjects[i].teacher + '</td>'
         out += '<td>' + thestore.subjects[i].room + '</td>'
-        out += '<td><form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></td>'
+        out += '<td><form method="post" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="post" action="/editSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></td>'
     }
     out += "</table>";
 
     //copied the above table from students
 
-    var template = fs.readFileSync("./subjectEdit.html", 'utf8');
+    var template = fs.readFileSync("./subjectfooter.html", 'utf8');
     var teachersList;
+    //For loop to display all the teacher records in the teacher array
+    //This works by reading the subjectfooter into memory
+    //and for every teacher record in the store, putting it into a hogan template, compiling it, and pushing it to the browser using out and rendering the template.
     for (i = 0; i < thestore.teachers.length; i++) {
         teachersList += '<option value=' + thestore.teachers[i].name + '>' + thestore.teachers[i].name + '</option>'
     }
@@ -508,13 +505,41 @@ function editSubject(doEdit, student) {
     out += template.render(context);
     return out;
 }
-
 /**
  deleteSubject function should delete the subject record by splicing empty space into the store.txt file. The getSubjects page should be refreshed when a record is deleted.
  */
-function deleteSubject(doEdit, student) {
-    console.log("deleteSubject");
-    //gah
+function deleteSubject(doEdit, subject) {
+    var out = "<h1>Subjects</h1><table border=1 width=100%>";
+    var i;
+    out += '<tr style="font-size: 20px;" >';
+    for (i = 0; i < Subjectheaders.length; i++) {
+        out += '<th >' + Subjectheaders[i] + '</th>';
+    }
+    out += "</tr>";
+    //put the store values into the table
+    for (i = 0; i < thestore.subjects.length; i++) {
+        out += '<tr style="font-size: 20px;" >';
+        out += '<td>' + thestore.subjects[i].name + '</td>'
+        out += '<td>' + thestore.subjects[i].teacher + '</td>'
+        out += '<td>' + thestore.subjects[i].room + '</td>'
+        out += '<td><form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')"><button type="submit">Delete</button></form><form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')"><button type="submit">Edit</button></form></td>'
+    }
+    out += "</table>";
+
+    //copied the above table from students
+
+    var template = fs.readFileSync("./subjectfooter.html", 'utf8');
+    var teachersList;
+    //For loop to display all the teacher records in the teacher array
+    //This works by reading the subjectfooter into memory
+    //and for every teacher record in the store, putting it into a hogan template, compiling it, and pushing it to the browser using out and rendering the template.
+    for (i = 0; i < thestore.teachers.length; i++) {
+        teachersList += '<option value=' + thestore.teachers[i].name + '>' + thestore.teachers[i].name + '</option>'
+    }
+    var context = { teachers: teachersList };
+    var template = hogan.compile(template)
+    out += template.render(context);
+    return out;
 }
 
 //404 function for typos in the URL, etc

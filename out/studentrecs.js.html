@@ -223,7 +223,7 @@ var server = http.createServer(function(req, res) {
             });
             //req.on binds the URL event to the object passed in the URL when the end event is triggered
             req.on('end', function() {
-                console.log(body);
+                console.log('body contains ' + body);
                 //querystring parser parses the body of the url body
                 var obj = qs.parse(body);
                 console.log('body ' + body);
@@ -233,7 +233,7 @@ var server = http.createServer(function(req, res) {
                 storeTheStore(store);
                 // launch the showpage function, has a request and response  param, 
                 //a  displayStudents method, and an included footer file 
-                showPage(req, res, displayStudents(), "./studentfooter.html");
+                showPage(req, res, displayStudents(true), "./studentfooter.html");
             });
 
         } else if (url == "/editStudent") {
@@ -253,24 +253,22 @@ var server = http.createServer(function(req, res) {
                 storeTheStore(store);
                 // launch the showpage function, has a request and response  param, 
                 //a  displayStudents method, and an included footer file 
-                showPage(req, res, displayStudents(), "./studentEdit.html");
+                showPage(req, res, displayStudents(true), "./studentEdit.html");
             });
-
-        }
-
-
-        //if the method is a POST method and has /deleteSubject encoded in the URL, 
-        //print to the console, process the req request
-        //the request on method processes the request body, 
-        //binds it to the POST event
-        //the var body quotation is used to construct the URL starting with  a quotation
-        // to open the concatenated data from the POST request  
-        else if (url == "/deleteSubject") {
+        } else if (url == "/deleteSubject") {
             var body = '';
             console.log("delete subject ");
             req.on('data', function(data) {
                 body += data;
             });
+
+
+            //if the method is a POST method and has /deleteSubject encoded in the URL, 
+            //print to the console, process the req request
+            //the request on method processes the request body, 
+            //binds it to the POST event
+            //the var body quotation is used to construct the URL starting with  a quotation
+            // to open the concatenated data from the POST request  
 
 
             //parse the /deleteSubject request
@@ -302,9 +300,7 @@ var server = http.createServer(function(req, res) {
     else if (url == "/getSubjects") {
         console.log("getSubjects");
         showPage(req, res, displaySubjects(true), "./subjectfooter.html");
-    } 
-
-    else if (url == "/editSubject") {
+    } else if (url == "/editSubject") {
         console.log("editSubjects");
         showPage(req, res, displaySubjects(true), "./subjectfooter.html");
     } else
@@ -387,7 +383,7 @@ function displayStudents(doEdit, student) {
         }
         out += '&lt;/td>&lt;/ol>'
             //out += '&lt;td>&lt;button onclick="editStudent(' + thestore.students[i].id + ')">Edit&lt;/button> &lt;button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete&lt;/button> &lt;button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)&lt;/button>&lt;/td>'
-        out += '&lt;td>&lt;form method="deleteStudent" action="/deleteStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="editStudent" action="/editStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/form>&lt;form method="gradeStudent" action="/gradeStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Add Grade(s)&lt;/button>' + '&lt;/form>&lt;/td>'
+        out += '&lt;td>&lt;form method="post" action="/deleteStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="post" action="/editStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/form>&lt;form method="post" action="/gradeStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Add Grade(s)&lt;/button>' + '&lt;/form>&lt;/td>'
             //see jquery bits, how to fit the plumbing together?!!
             // TODO make this work - crai
     }
@@ -426,7 +422,7 @@ function displaySubjects(doEdit, subject) {
         out += '&lt;td>' + thestore.subjects[i].name + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].teacher + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].room + '&lt;/td>'
-        out += '&lt;td>&lt;form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/td>'
+        out += '&lt;td>&lt;form method="post" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="post" action="/editSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/td>'
     }
     out += "&lt;/table>";
 
@@ -505,8 +501,6 @@ function deleteStudent(doEdit, student) {
  editSubject function should pull the Subject from the store.txt, push the subject details to editable fields, and then allow the user to modify and resubmit. I couldn't get this working. My plan was to modify the addStudents function. Upon calling the function, the editSubject.html footer is displayed with the student details pre-populated in the Edit Student fields. The user can then edit the various values, and then submit the changes in the same way that a student is added. The form fields are extracted from the store.txt using jquery and populated on the page using the unique subject id obtained from the onclick action of the button on the getSubjects page.
  */
 function editSubject(doEdit, student) {
-    console.log("editSubject");
-
     var out = "&lt;h1>Subjects&lt;/h1>&lt;table border=1 width=100%>";
     var i;
     out += '&lt;tr style="font-size: 20px;" >';
@@ -520,14 +514,17 @@ function editSubject(doEdit, student) {
         out += '&lt;td>' + thestore.subjects[i].name + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].teacher + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].room + '&lt;/td>'
-        out += '&lt;td>&lt;form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/td>'
+        out += '&lt;td>&lt;form method="post" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="post" action="/editSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/td>'
     }
     out += "&lt;/table>";
 
     //copied the above table from students
 
-    var template = fs.readFileSync("./subjectEdit.html", 'utf8');
+    var template = fs.readFileSync("./subjectfooter.html", 'utf8');
     var teachersList;
+    //For loop to display all the teacher records in the teacher array
+    //This works by reading the subjectfooter into memory
+    //and for every teacher record in the store, putting it into a hogan template, compiling it, and pushing it to the browser using out and rendering the template.
     for (i = 0; i &lt; thestore.teachers.length; i++) {
         teachersList += '&lt;option value=' + thestore.teachers[i].name + '>' + thestore.teachers[i].name + '&lt;/option>'
     }
@@ -536,13 +533,41 @@ function editSubject(doEdit, student) {
     out += template.render(context);
     return out;
 }
-
 /**
  deleteSubject function should delete the subject record by splicing empty space into the store.txt file. The getSubjects page should be refreshed when a record is deleted.
  */
-function deleteSubject(doEdit, student) {
-    console.log("deleteSubject");
-    //gah
+function deleteSubject(doEdit, subject) {
+    var out = "&lt;h1>Subjects&lt;/h1>&lt;table border=1 width=100%>";
+    var i;
+    out += '&lt;tr style="font-size: 20px;" >';
+    for (i = 0; i &lt; Subjectheaders.length; i++) {
+        out += '&lt;th >' + Subjectheaders[i] + '&lt;/th>';
+    }
+    out += "&lt;/tr>";
+    //put the store values into the table
+    for (i = 0; i &lt; thestore.subjects.length; i++) {
+        out += '&lt;tr style="font-size: 20px;" >';
+        out += '&lt;td>' + thestore.subjects[i].name + '&lt;/td>'
+        out += '&lt;td>' + thestore.subjects[i].teacher + '&lt;/td>'
+        out += '&lt;td>' + thestore.subjects[i].room + '&lt;/td>'
+        out += '&lt;td>&lt;form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">&lt;button type="submit">Delete&lt;/button>&lt;/form>&lt;form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">&lt;button type="submit">Edit&lt;/button>&lt;/form>&lt;/td>'
+    }
+    out += "&lt;/table>";
+
+    //copied the above table from students
+
+    var template = fs.readFileSync("./subjectfooter.html", 'utf8');
+    var teachersList;
+    //For loop to display all the teacher records in the teacher array
+    //This works by reading the subjectfooter into memory
+    //and for every teacher record in the store, putting it into a hogan template, compiling it, and pushing it to the browser using out and rendering the template.
+    for (i = 0; i &lt; thestore.teachers.length; i++) {
+        teachersList += '&lt;option value=' + thestore.teachers[i].name + '>' + thestore.teachers[i].name + '&lt;/option>'
+    }
+    var context = { teachers: teachersList };
+    var template = hogan.compile(template)
+    out += template.render(context);
+    return out;
 }
 
 //404 function for typos in the URL, etc
@@ -596,7 +621,7 @@ function serveStatic(response, cache, absPath) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Apr 10 2017 13:26:13 GMT+0100 (GMT Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Apr 10 2017 14:36:22 GMT+0100 (GMT Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

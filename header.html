@@ -64,15 +64,21 @@
            $('#deletestudent')[0].submit();
         }
         function editStudent(id){
-            $('#studentid').val(id);
+            $('#editstudentid').val(id);
             // submit the form
             $('#editstudent')[0].submit();
         }
         function deleteSubject(id){
-            $('#subjectid').val(id);
+            $('#deletesubjectid').val(id);
             // submit the form
             $('#deletesubject')[0].submit();
         }
+                function editSubject(id){
+            $('#editsubjectid').val(id);
+            // submit the form
+            $('#editsubject')[0].submit();
+        }
+
         $(document).ready(function() {
             $("#addSubject").hide();
             $("#addStudent").hide();
@@ -99,8 +105,8 @@
 
     <nav>
         <ul>
-            <li> <a href="/getStudents">ShowStudents</a> </li>
-            <li><a href="/getSubjects">ShowSubjects</a></li>
+            <li> <a href="/getStudents">Students</a> </li>
+            <li><a href="/getSubjects">Subjects</a></li>
 
         </ul>
     </nav>
@@ -110,10 +116,10 @@
             <input id="studentid" type="hidden" name="id" value="">
         </form>
         <form id="deletesubject" method="post" action="/deleteSubject">
-            <input id="subjectid" type="hidden" name="id" value="">
+            <input id="deletesubjectid" type="hidden" name="id" value="">
         </form>
         <form id="editStudent" method="get" action="/editStudent">
-            <input id="studentid" type="hidden" name="id" value="">
+            <input id="editstudentid" type="hidden" name="id" value="">
         </form>
 
 
