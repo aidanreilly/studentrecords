@@ -109,6 +109,14 @@
         "biology"
       ],
       "id": 9
+    },
+    {
+      "firstname": "Nelson ",
+      "surname": "Abbey",
+      "subjects": [
+        "maths"
+      ],
+      "id": 10
     }
   ],
   "subjects": [
@@ -147,6 +155,12 @@
       "room": "A6",
       "teacher": "Mary",
       "id": 5
+    },
+    {
+      "name": "religion",
+      "room": "V3",
+      "teacher": "John",
+      "id": 6
     }
   ],
   "teachers": [
