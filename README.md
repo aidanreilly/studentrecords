@@ -16,4 +16,6 @@ This doc was built with jsdoc.
 
     jsdoc studentrecs.js -d out  -r --readme README.md
 
+output is at out/index.html
+
 
