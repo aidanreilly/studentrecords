@@ -141,6 +141,12 @@
       "room": "B2",
       "teacher": "John",
       "id": 4
+    },
+    {
+      "name": "physics",
+      "room": "A6",
+      "teacher": "Mary",
+      "id": 5
     }
   ],
   "teachers": [

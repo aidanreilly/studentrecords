@@ -108,7 +108,7 @@ var server = http.createServer(function(req, res) {
                     console.log("student subjects is undefined");
                 } else
 
-                 //Convert the subjects variable into an Array if there is only one subject
+                //Convert the subjects variable into an Array if there is only one subject
                 if (!(student.subjects instanceof Array)) {
                     if (student.subjects != null)
                         student.subjects = [student.subjects];
@@ -208,9 +208,7 @@ var server = http.createServer(function(req, res) {
                 showPage(req, res, displayStudents(), "./studentfooter.html");
             });
 
-        }
-
-        else if (url == "/editStudent") {
+        } else if (url == "/editStudent") {
             var body = '';
             console.log("edit student");
             req.on('data', function(data) {
@@ -245,6 +243,7 @@ var server = http.createServer(function(req, res) {
             req.on('data', function(data) {
                 body += data;
             });
+            
 
             //parse the /deleteSubject request
             // put the parsed post in the store
@@ -275,6 +274,11 @@ var server = http.createServer(function(req, res) {
     else if (url == "/getSubjects") {
         console.log("getSubjects");
         showPage(req, res, displaySubjects(), "./subjectfooter.html");
+    } 
+
+    else if (url == "/editSubject") {
+        console.log("editSubjects");
+        showPage(req, res, displaySubjects(), "./subjectfooter.html");
     } else
         showPage(req, res, displayStudents(), "./studentfooter.html");
 });
@@ -285,7 +289,7 @@ var server = http.createServer(function(req, res) {
  */
 server.listen(3000);
 
- /**showPage function returns status 200 (OK) and pushes the html to the browser. showPage function  is called whenever a reqest or response is triggered.
+/**showPage function returns status 200 (OK) and pushes the html to the browser. showPage function  is called whenever a reqest or response is triggered.
  *The data variable is populated with the contents of the header.html using fs. Str is added to the data var and saved to the data var which is parsed by the ReadFileSync file read method, encoded in utf 8. Res.end sends the data.
  */
 function showPage(req, res, str, footer) {
@@ -346,15 +350,16 @@ function displayStudents(doEdit, student) {
         out += '<td>' + thestore.students[i].firstname + '</td>'
         out += '<td>' + thestore.students[i].surname + '</td>'
         out += '<td><ol>'
-        //display the results in an ordered list.
+            //display the results in an ordered list.
         j = 0;
         for (j = 0; j < thestore.students[i].subjects.length; j++) {
             //hardcoding the grade causes an error here. commented it out. if the grades function was working correctly, this is how i would display it. 
-            out += '<li>' + thestore.students[i].subjects[j] +  '</li>'
-            //out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
+            out += '<li>' + thestore.students[i].subjects[j] + '</li>'
+                //out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
         }
         out += '</td></ol>'
-        out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button> <button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)</button></td>'
+            //out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button> <button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)</button></td>'
+        out += '<td><form method="deleteStudent" action="/deleteStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="editStudent" action="/editStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></form><form method="gradeStudent" action="/gradeStudent(' + thestore.students[i].id + ')">' + '<button type="submit">Add Grade(s)</button>' + '</form></td>'
             //see jquery bits, how to fit the plumbing together?!!
             // TODO make this work - crai
     }
@@ -375,12 +380,8 @@ function displayStudents(doEdit, student) {
 }
 
 
-//defines the displaySubjects function  
-//similiarly to the Students above
-//the html is appended to the out var, and rendered to the browser with hogan
-
 /** 
-The displaySubjects function works similiarly to the display Students function. The out object encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of subjectheader elements and create the <th> entries in the table and populate with the values of each subjectheader entry. It does the same for subjects and ids. Hogan.js is used to render the output as html.
+The displaySubjects function works similiarly to the display Students function. The out object encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of subjectheader elements and create the <th> entries in the table and populate with the values of each subjectheader entry. It does the same for subjects and ids. Hogan.js is used to render the teachers dropdown output as html.
  */
 
 function displaySubjects(doEdit, subject) {
@@ -397,7 +398,7 @@ function displaySubjects(doEdit, subject) {
         out += '<td>' + thestore.subjects[i].name + '</td>'
         out += '<td>' + thestore.subjects[i].teacher + '</td>'
         out += '<td>' + thestore.subjects[i].room + '</td>'
-        out += '<td><button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit</button> <button onclick="deleteSubject(' + thestore.subjects[i].id + ')">Delete</button></td>'
+        out += '<td><form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></td>'
     }
     out += "</table>";
 
@@ -436,12 +437,12 @@ function editStudent(doEdit, student) {
         out += '<td>' + thestore.students[i].firstname + '</td>'
         out += '<td>' + thestore.students[i].surname + '</td>'
         out += '<td><ol>'
-        //display the results in an ordered list.
+            //display the results in an ordered list.
         j = 0;
         for (j = 0; j < thestore.students[i].subjects.length; j++) {
             //hardcoding the grade causes an error here. commented it out. if the grades function was working correctly, this is how i would display it. 
-            out += '<li>' + thestore.students[i].subjects[j] +  '</li>'
-            //out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
+            out += '<li>' + thestore.students[i].subjects[j] + '</li>'
+                //out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
         }
         out += '</td></ol>'
         out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button> <button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)</button></td>'
@@ -491,7 +492,7 @@ function editSubject(doEdit, student) {
         out += '<td>' + thestore.subjects[i].name + '</td>'
         out += '<td>' + thestore.subjects[i].teacher + '</td>'
         out += '<td>' + thestore.subjects[i].room + '</td>'
-        out += '<td><button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit</button> <button onclick="deletesubject(' + thestore.subjects[i].id + ')">Delete</button></td>'
+        out += '<td><form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Delete</button>' + '</form><form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '<button type="submit">Edit</button>' + '</form></td>'
     }
     out += "</table>";
 
@@ -509,11 +510,11 @@ function editSubject(doEdit, student) {
 }
 
 /**
- deleteSubjects function should delete the subject record by splicing empty space into the store.txt file. The getSubjects page should be refreshed when a record is deleted.
+ deleteSubject function should delete the subject record by splicing empty space into the store.txt file. The getSubjects page should be refreshed when a record is deleted.
  */
 function deleteSubject(doEdit, student) {
     console.log("deleteSubject");
-//gah
+    //gah
 }
 
 //404 function for typos in the URL, etc
