@@ -64,7 +64,7 @@
            $('#deletestudent')[0].submit();
         }
         function editStudent(id){
-            $('#    ').val(id);
+            $('#studentid').val(id);
             // submit the form
             $('#editstudent')[0].submit();
         }
@@ -112,8 +112,8 @@
         <form id="deletesubject" method="post" action="/deleteSubject">
             <input id="subjectid" type="hidden" name="id" value="">
         </form>
-        <form id="editstudent" method="post" action="/editStudent">
-            <input id="editstudentid" type="hidden" name="id" value="">
+        <form id="editStudent" method="post" action="/editStudent">
+            <input id="studentid" type="hidden" name="id" value="">
         </form>
 
 

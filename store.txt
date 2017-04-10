@@ -73,6 +73,42 @@
         54
       ],
       "id": 5
+    },
+    {
+      "firstname": "Mike ",
+      "surname": "Truss",
+      "subjects": [
+        "maths"
+      ],
+      "id": 6
+    },
+    {
+      "firstname": "Sean ",
+      "surname": "Flynn",
+      "subjects": [
+        "maths"
+      ],
+      "id": 7
+    },
+    {
+      "firstname": "Pamela",
+      "surname": "Myers",
+      "subjects": [
+        "latin",
+        "biology"
+      ],
+      "id": 8
+    },
+    {
+      "firstname": "Colm",
+      "surname": "O'Mahony",
+      "subjects": [
+        "english",
+        "maths",
+        "latin",
+        "biology"
+      ],
+      "id": 9
     }
   ],
   "subjects": [
@@ -99,6 +135,12 @@
       "room": "D2",
       "teacher": "John",
       "id": 3
+    },
+    {
+      "name": "chemistry",
+      "room": "B2",
+      "teacher": "John",
+      "id": 4
     }
   ],
   "teachers": [

@@ -1,5 +1,5 @@
 /**
- * @file main applcation file for the student records node.js application
+ * @file main application file for the student records node.js application
  * @author Aidan Reilly 
  */
 
@@ -16,19 +16,19 @@ var qs = require('querystring');
  */
 var fs = require('fs');
 /**
- * path is for manipulating file paths, finding the basename, file type, etc.
+ * Path is for manipulating file paths, finding the basename, file type, etc.
  */
 var path = require('path');
 /**
- * hogan.js is a tempalting engine that simlifies html development
+ * hogan.js is a templating engine that simplifies html development.
  */
 var hogan = require('hogan.js');
 /**
- * the cache var is instantiated here so that it can store content later in the program
+ * The cache var is instantiated here so that it can store content later in the program.
  */
 var cache = {};
 /**
- * thestore is a "braced" complex variable with two arrays, students and subjects
+ * Thestore is a "braced" complex variable with arrays, students, subjects, teachers, grades
  */
 var thestore = {
     students: [],
@@ -117,7 +117,7 @@ var server = http.createServer(function(req, res) {
                         student.subjects = [];
                     }
                 }
-                //now we stringify the message using the JSON stringify method and post it to the console and push it to the store.
+                //now we stringify the message using the JSON stringify method and post it to the console and push it to the student store.
                 console.log('student: ' + JSON.stringify(student, null, 2));
                 thestore.students.push(student);
                 //storeTheStore function adds the student record to the json txt file.
@@ -141,7 +141,7 @@ var server = http.createServer(function(req, res) {
             req.on('data', function(data) {
                 body += data;
             });
-            // on completing the request, print the entire body of the request to the console
+            // on completing the request, print the entire body of the request to the console and make the unique student id
             req.on('end', function() {
                 var subject = qs.parse(body);
                 console.log('body ' + body);
@@ -210,6 +210,29 @@ var server = http.createServer(function(req, res) {
 
         }
 
+        else if (url == "/editStudent") {
+            var body = '';
+            console.log("edit student");
+            req.on('data', function(data) {
+                body += data;
+            });
+            //req.on binds the URL event to the object passed in the URL when the end event is triggered
+            req.on('end', function() {
+                console.log(body);
+                //querystring parser parses the body of the url body
+                var obj = qs.parse(body);
+                console.log('body ' + body);
+                console.log(obj);
+                //storeTheStore function adds the subjects to the json txt file.
+                storeTheStore(store);
+                // launch the showpage function, has a request and response  param, 
+                //a  displayStudents method, and an included footer file 
+                showPage(req, res, displayStudents(), "./studentEdit.html");
+            });
+
+        }
+
+
         //if the method is a POST method and has /deleteSubject encoded in the URL, 
         //print to the console, process the req request
         //the request on method processes the request body, 
@@ -275,8 +298,8 @@ function showPage(req, res, str, footer) {
     data += str;
     res.end(data);
 }
-//define the storeTheStore function which takes file as a parameter  
-/** the storeTheStore method pushes the students records to the JSON store.txt. The fs writeFile method stringifys the json thestore complex var in utf8, and can also pass an error to the callback function. **/
+
+/** the storeTheStore function pushes the students records to the JSON store.txt. The fs writeFile method stringifys the json thestore complex var in utf8, and can also pass an error to the callback function. **/
 function storeTheStore(file) {
     fs.writeFile(file, JSON.stringify(thestore, null, 2), 'utf8', function(err) {
         //if an err is experienced, throw the err exception
@@ -287,7 +310,7 @@ function storeTheStore(file) {
 }
 
 /**
-The loadOrInitializeArray function is used to read the JSON into thestore. It evaluate the data string and parse it into thestore  students and subjects arrays. fs checks if the file exists, if it does, read the file encoded as UTF8 to the data var. Then, turn the data var into a string.
+The loadOrInitializeArray function is used to read the JSON into thestore. It evaluate the data string and parses it into thestore. fs checks if the file exists, if it does, read the file encoded as UTF8 to the data var. Then, parse the data object into thestore.
  */
 function loadOrInitializeArray(file) {
     fs.exists(file, function(exists) {
@@ -307,7 +330,7 @@ function loadOrInitializeArray(file) {
 
 
 /** 
-The displayStudents function, takes doEdit and student params. The out var encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of studentheader elements and create the <th> entries in the table and populate with the values of each studentheader entry. It does the same for students and ids. Hogan.js is used to render the output as html.
+The displayStudents function, takes doEdit and student params. The out object encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of studentheader elements and create the <th> entries in the table and populate with the values of each studentheader entry. It does the same for students and ids. Hogan.js is used to render the output as html.
  */
 function displayStudents(doEdit, student) {
     var out = "<h1> Students</h1><table border=1 width=100%>";
@@ -326,15 +349,14 @@ function displayStudents(doEdit, student) {
         //display the results in an ordered list.
         j = 0;
         for (j = 0; j < thestore.students[i].subjects.length; j++) {
-            out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
+            //hardcoding the grade causes an error here. commented it out. if the grades function was working correctly, this is how i would display it. 
+            out += '<li>' + thestore.students[i].subjects[j] +  '</li>'
+            //out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
         }
         out += '</td></ol>'
         out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button> <button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)</button></td>'
             //see jquery bits, how to fit the plumbing together?!!
-            // TODO Output Studthestoreents
-            //   out+= '<td>'+thestore.students[i].firstname+'</td>'
-            //'<td>'+'<button onclick="deleteStudent('+thestore.students[i].id+')">Delete</button>'
-            //'</td>';
+            // TODO make this work - crai
     }
     out += "</table>";
     //the template  var is buit by fs readfile which takes the input from studentfooter.html
@@ -358,7 +380,7 @@ function displayStudents(doEdit, student) {
 //the html is appended to the out var, and rendered to the browser with hogan
 
 /** 
-The displaySubjects function works similiarly to the display Students function. The out var encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of subjectheader elements and create the <th> entries in the table and populate with the values of each subjectheader entry. It does the same for subjects and ids. Hogan.js is used to render the output as html.
+The displaySubjects function works similiarly to the display Students function. The out object encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of subjectheader elements and create the <th> entries in the table and populate with the values of each subjectheader entry. It does the same for subjects and ids. Hogan.js is used to render the output as html.
  */
 
 function displaySubjects(doEdit, subject) {
@@ -370,13 +392,12 @@ function displaySubjects(doEdit, subject) {
     }
     out += "</tr>";
     //put the store values into the table
-    //the editSubject and deleteSubject functions are defined in header.h TODO TODO
     for (i = 0; i < thestore.subjects.length; i++) {
         out += '<tr style="font-size: 20px;" >';
         out += '<td>' + thestore.subjects[i].name + '</td>'
         out += '<td>' + thestore.subjects[i].teacher + '</td>'
         out += '<td>' + thestore.subjects[i].room + '</td>'
-        out += '<td><button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit</button> <button onclick="deletesubject(' + thestore.subjects[i].id + ')">Delete</button></td>'
+        out += '<td><button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit</button> <button onclick="deleteSubject(' + thestore.subjects[i].id + ')">Delete</button></td>'
     }
     out += "</table>";
 
@@ -394,6 +415,105 @@ function displaySubjects(doEdit, subject) {
     var template = hogan.compile(template)
     out += template.render(context);
     return out;
+}
+
+/**
+ editStudents function should pull the Student from the store.txt, push details to editable fields, and then allow the user to modify and resubmit. I couldn't get this working. My plan was to modify the displayStudents function. Upon calling the function, the editStudent.html footer is displayed with the student details pre-populated in the Edit Student fields. The user can then edit the various values, and then submit the changes in the same way that a student is added. The form fields are extracted from the store.txt using jquery and populated on the page using the unique student id. obtained from the onclick action of the button on the getStudents page.
+ */
+function editStudent(doEdit, student) {
+    console.log("editStudent");
+
+    var out = "<h1> Students</h1><table border=1 width=100%>";
+    var i;
+    out += '<tr style="font-size: 20px;" >';
+    for (i = 0; i < Studentheaders.length; i++) {
+        out += '<th >' + Studentheaders[i] + '</th>';
+    }
+    out += '</tr>';
+    //put the store values into the table
+    for (i = 0; i < thestore.students.length; i++) {
+        out += '<tr style="font-size: 20px;" >';
+        out += '<td>' + thestore.students[i].firstname + '</td>'
+        out += '<td>' + thestore.students[i].surname + '</td>'
+        out += '<td><ol>'
+        //display the results in an ordered list.
+        j = 0;
+        for (j = 0; j < thestore.students[i].subjects.length; j++) {
+            //hardcoding the grade causes an error here. commented it out. if the grades function was working correctly, this is how i would display it. 
+            out += '<li>' + thestore.students[i].subjects[j] +  '</li>'
+            //out += '<li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '</li>'
+        }
+        out += '</td></ol>'
+        out += '<td><button onclick="editStudent(' + thestore.students[i].id + ')">Edit</button> <button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete</button> <button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)</button></td>'
+            //see jquery bits, how to fit the plumbing together?!!
+            // TODO make this work - crai
+    }
+    out += "</table>";
+    //the template  var is buit by fs readfile which takes the input from studentfooter.html
+    var template = fs.readFileSync("./studentEdit.html", 'utf8');
+    var subjectsList;
+    //For loop to display all the students subjects in the record
+    //This works by reading the studentfooter into memory
+    //and for every subject in the store, putting it into a hogan template, compiling it, and pushing it to the browser using out and rendering the template.
+    for (i = 0; i < thestore.subjects.length; i++) {
+        subjectsList += '<option value=' + thestore.subjects[i].name + '>' + thestore.subjects[i].name + '</option>'
+    }
+    var context = { subjects: subjectsList };
+    var template = hogan.compile(template)
+    out += template.render(context);
+    return out;
+}
+
+/**
+ deleteStudent function should delete the student record by splicing empty space into the store.txt file. The getStudents page should be refreshed when a record is deleted.
+ */
+function deleteStudent(doEdit, student) {
+    console.log("deleteStudent");
+    //gah
+}
+
+/**
+ editSubject function should pull the Subject from the store.txt, push the subject details to editable fields, and then allow the user to modify and resubmit. I couldn't get this working. My plan was to modify the addStudents function. Upon calling the function, the editSubject.html footer is displayed with the student details pre-populated in the Edit Student fields. The user can then edit the various values, and then submit the changes in the same way that a student is added. The form fields are extracted from the store.txt using jquery and populated on the page using the unique subject id obtained from the onclick action of the button on the getSubjects page.
+ */
+function editSubject(doEdit, student) {
+    console.log("editSubject");
+
+    var out = "<h1>Subjects</h1><table border=1 width=100%>";
+    var i;
+    out += '<tr style="font-size: 20px;" >';
+    for (i = 0; i < Subjectheaders.length; i++) {
+        out += '<th >' + Subjectheaders[i] + '</th>';
+    }
+    out += "</tr>";
+    //put the store values into the table
+    for (i = 0; i < thestore.subjects.length; i++) {
+        out += '<tr style="font-size: 20px;" >';
+        out += '<td>' + thestore.subjects[i].name + '</td>'
+        out += '<td>' + thestore.subjects[i].teacher + '</td>'
+        out += '<td>' + thestore.subjects[i].room + '</td>'
+        out += '<td><button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit</button> <button onclick="deletesubject(' + thestore.subjects[i].id + ')">Delete</button></td>'
+    }
+    out += "</table>";
+
+    //copied the above table from students
+
+    var template = fs.readFileSync("./subjectEdit.html", 'utf8');
+    var teachersList;
+    for (i = 0; i < thestore.teachers.length; i++) {
+        teachersList += '<option value=' + thestore.teachers[i].name + '>' + thestore.teachers[i].name + '</option>'
+    }
+    var context = { teachers: teachersList };
+    var template = hogan.compile(template)
+    out += template.render(context);
+    return out;
+}
+
+/**
+ deleteSubjects function should delete the subject record by splicing empty space into the store.txt file. The getSubjects page should be refreshed when a record is deleted.
+ */
+function deleteSubject(doEdit, student) {
+    console.log("deleteSubject");
+//gah
 }
 
 //404 function for typos in the URL, etc
