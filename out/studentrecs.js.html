@@ -136,7 +136,7 @@ var server = http.createServer(function(req, res) {
                     console.log("student subjects is undefined");
                 } else
 
-                 //Convert the subjects variable into an Array if there is only one subject
+                //Convert the subjects variable into an Array if there is only one subject
                 if (!(student.subjects instanceof Array)) {
                     if (student.subjects != null)
                         student.subjects = [student.subjects];
@@ -236,9 +236,7 @@ var server = http.createServer(function(req, res) {
                 showPage(req, res, displayStudents(), "./studentfooter.html");
             });
 
-        }
-
-        else if (url == "/editStudent") {
+        } else if (url == "/editStudent") {
             var body = '';
             console.log("edit student");
             req.on('data', function(data) {
@@ -274,6 +272,7 @@ var server = http.createServer(function(req, res) {
                 body += data;
             });
 
+
             //parse the /deleteSubject request
             // put the parsed post in the store
             req.on('end', function() {
@@ -281,7 +280,7 @@ var server = http.createServer(function(req, res) {
                 //show the store page and append the subjectfooter.html page
                 //storeTheStore function adds the subjects to the json txt file.
                 storeTheStore(store);
-                showPage(req, res, displaySubjects(), "./subjectfooter.html");
+                showPage(req, res, displaySubjects(true), "./subjectfooter.html");
             });
 
         }
@@ -290,21 +289,26 @@ var server = http.createServer(function(req, res) {
     //show page function displays the students and append the footer html page
     else if (url == "/getStudents") {
         console.log("getstudents");
-        showPage(req, res, displayStudents(), "./studentfooter.html");
+        showPage(req, res, displayStudents(true), "./studentfooter.html");
     }
     //TODO: added this to push grade work to the edit page with a gradeStudent.html footer
     else if (url == "/gradeStudent") {
         console.log("getstudents");
-        showPage(req, res, displayStudents(), "./gradeStudent.html");
+        showPage(req, res, displayStudents(true), "./gradeStudent.html");
     }
 
     //if the url is getSubjects, print to the log 
     //show page function  display the subjects and append the footer html page
     else if (url == "/getSubjects") {
         console.log("getSubjects");
-        showPage(req, res, displaySubjects(), "./subjectfooter.html");
+        showPage(req, res, displaySubjects(true), "./subjectfooter.html");
+    } 
+
+    else if (url == "/editSubject") {
+        console.log("editSubjects");
+        showPage(req, res, displaySubjects(true), "./subjectfooter.html");
     } else
-        showPage(req, res, displayStudents(), "./studentfooter.html");
+        showPage(req, res, displayStudents(true), "./studentfooter.html");
 });
 
 //listen on port 3000
@@ -313,7 +317,7 @@ var server = http.createServer(function(req, res) {
  */
 server.listen(3000);
 
- /**showPage function returns status 200 (OK) and pushes the html to the browser. showPage function  is called whenever a reqest or response is triggered.
+/**showPage function returns status 200 (OK) and pushes the html to the browser. showPage function  is called whenever a reqest or response is triggered.
  *The data variable is populated with the contents of the header.html using fs. Str is added to the data var and saved to the data var which is parsed by the ReadFileSync file read method, encoded in utf 8. Res.end sends the data.
  */
 function showPage(req, res, str, footer) {
@@ -374,15 +378,16 @@ function displayStudents(doEdit, student) {
         out += '&lt;td>' + thestore.students[i].firstname + '&lt;/td>'
         out += '&lt;td>' + thestore.students[i].surname + '&lt;/td>'
         out += '&lt;td>&lt;ol>'
-        //display the results in an ordered list.
+            //display the results in an ordered list.
         j = 0;
         for (j = 0; j &lt; thestore.students[i].subjects.length; j++) {
             //hardcoding the grade causes an error here. commented it out. if the grades function was working correctly, this is how i would display it. 
-            out += '&lt;li>' + thestore.students[i].subjects[j] +  '&lt;/li>'
-            //out += '&lt;li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '&lt;/li>'
+            out += '&lt;li>' + thestore.students[i].subjects[j] + '&lt;/li>'
+                //out += '&lt;li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '&lt;/li>'
         }
         out += '&lt;/td>&lt;/ol>'
-        out += '&lt;td>&lt;button onclick="editStudent(' + thestore.students[i].id + ')">Edit&lt;/button> &lt;button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete&lt;/button> &lt;button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)&lt;/button>&lt;/td>'
+            //out += '&lt;td>&lt;button onclick="editStudent(' + thestore.students[i].id + ')">Edit&lt;/button> &lt;button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete&lt;/button> &lt;button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)&lt;/button>&lt;/td>'
+        out += '&lt;td>&lt;form method="deleteStudent" action="/deleteStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="editStudent" action="/editStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/form>&lt;form method="gradeStudent" action="/gradeStudent(' + thestore.students[i].id + ')">' + '&lt;button type="submit">Add Grade(s)&lt;/button>' + '&lt;/form>&lt;/td>'
             //see jquery bits, how to fit the plumbing together?!!
             // TODO make this work - crai
     }
@@ -403,12 +408,8 @@ function displayStudents(doEdit, student) {
 }
 
 
-//defines the displaySubjects function  
-//similiarly to the Students above
-//the html is appended to the out var, and rendered to the browser with hogan
-
 /** 
-The displaySubjects function works similiarly to the display Students function. The out object encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of subjectheader elements and create the &lt;th> entries in the table and populate with the values of each subjectheader entry. It does the same for subjects and ids. Hogan.js is used to render the output as html.
+The displaySubjects function works similiarly to the display Students function. The out object encodes the header when output to html. The upper for loop builds the table. The code iterates over i for the number of subjectheader elements and create the &lt;th> entries in the table and populate with the values of each subjectheader entry. It does the same for subjects and ids. Hogan.js is used to render the teachers dropdown output as html.
  */
 
 function displaySubjects(doEdit, subject) {
@@ -425,7 +426,7 @@ function displaySubjects(doEdit, subject) {
         out += '&lt;td>' + thestore.subjects[i].name + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].teacher + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].room + '&lt;/td>'
-        out += '&lt;td>&lt;button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit&lt;/button> &lt;button onclick="deleteSubject(' + thestore.subjects[i].id + ')">Delete&lt;/button>&lt;/td>'
+        out += '&lt;td>&lt;form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/td>'
     }
     out += "&lt;/table>";
 
@@ -464,12 +465,12 @@ function editStudent(doEdit, student) {
         out += '&lt;td>' + thestore.students[i].firstname + '&lt;/td>'
         out += '&lt;td>' + thestore.students[i].surname + '&lt;/td>'
         out += '&lt;td>&lt;ol>'
-        //display the results in an ordered list.
+            //display the results in an ordered list.
         j = 0;
         for (j = 0; j &lt; thestore.students[i].subjects.length; j++) {
             //hardcoding the grade causes an error here. commented it out. if the grades function was working correctly, this is how i would display it. 
-            out += '&lt;li>' + thestore.students[i].subjects[j] +  '&lt;/li>'
-            //out += '&lt;li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '&lt;/li>'
+            out += '&lt;li>' + thestore.students[i].subjects[j] + '&lt;/li>'
+                //out += '&lt;li>' + thestore.students[i].subjects[j] + ' , ' + thestore.students[i].grades[j] + '&lt;/li>'
         }
         out += '&lt;/td>&lt;/ol>'
         out += '&lt;td>&lt;button onclick="editStudent(' + thestore.students[i].id + ')">Edit&lt;/button> &lt;button onclick="deleteStudent(' + thestore.students[i].id + ')">Delete&lt;/button> &lt;button onclick="gradeStudent(' + thestore.students[i].id + ')">Add Grade(s)&lt;/button>&lt;/td>'
@@ -519,7 +520,7 @@ function editSubject(doEdit, student) {
         out += '&lt;td>' + thestore.subjects[i].name + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].teacher + '&lt;/td>'
         out += '&lt;td>' + thestore.subjects[i].room + '&lt;/td>'
-        out += '&lt;td>&lt;button onclick="editSubject(' + thestore.subjects[i].id + ')">Edit&lt;/button> &lt;button onclick="deletesubject(' + thestore.subjects[i].id + ')">Delete&lt;/button>&lt;/td>'
+        out += '&lt;td>&lt;form method="deleteSubject" action="/deleteSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Delete&lt;/button>' + '&lt;/form>&lt;form method="editSubject" action="/editSubject(' + thestore.subjects[i].id + ')">' + '&lt;button type="submit">Edit&lt;/button>' + '&lt;/form>&lt;/td>'
     }
     out += "&lt;/table>";
 
@@ -537,11 +538,11 @@ function editSubject(doEdit, student) {
 }
 
 /**
- deleteSubjects function should delete the subject record by splicing empty space into the store.txt file. The getSubjects page should be refreshed when a record is deleted.
+ deleteSubject function should delete the subject record by splicing empty space into the store.txt file. The getSubjects page should be refreshed when a record is deleted.
  */
 function deleteSubject(doEdit, student) {
     console.log("deleteSubject");
-//gah
+    //gah
 }
 
 //404 function for typos in the URL, etc
@@ -595,7 +596,7 @@ function serveStatic(response, cache, absPath) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Apr 10 2017 10:35:51 GMT+0100 (GMT Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon Apr 10 2017 13:26:13 GMT+0100 (GMT Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

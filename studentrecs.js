@@ -243,7 +243,7 @@ var server = http.createServer(function(req, res) {
             req.on('data', function(data) {
                 body += data;
             });
-            
+
 
             //parse the /deleteSubject request
             // put the parsed post in the store
@@ -252,7 +252,7 @@ var server = http.createServer(function(req, res) {
                 //show the store page and append the subjectfooter.html page
                 //storeTheStore function adds the subjects to the json txt file.
                 storeTheStore(store);
-                showPage(req, res, displaySubjects(), "./subjectfooter.html");
+                showPage(req, res, displaySubjects(true), "./subjectfooter.html");
             });
 
         }
@@ -261,26 +261,26 @@ var server = http.createServer(function(req, res) {
     //show page function displays the students and append the footer html page
     else if (url == "/getStudents") {
         console.log("getstudents");
-        showPage(req, res, displayStudents(), "./studentfooter.html");
+        showPage(req, res, displayStudents(true), "./studentfooter.html");
     }
     //TODO: added this to push grade work to the edit page with a gradeStudent.html footer
     else if (url == "/gradeStudent") {
         console.log("getstudents");
-        showPage(req, res, displayStudents(), "./gradeStudent.html");
+        showPage(req, res, displayStudents(true), "./gradeStudent.html");
     }
 
     //if the url is getSubjects, print to the log 
     //show page function  display the subjects and append the footer html page
     else if (url == "/getSubjects") {
         console.log("getSubjects");
-        showPage(req, res, displaySubjects(), "./subjectfooter.html");
+        showPage(req, res, displaySubjects(true), "./subjectfooter.html");
     } 
 
     else if (url == "/editSubject") {
         console.log("editSubjects");
-        showPage(req, res, displaySubjects(), "./subjectfooter.html");
+        showPage(req, res, displaySubjects(true), "./subjectfooter.html");
     } else
-        showPage(req, res, displayStudents(), "./studentfooter.html");
+        showPage(req, res, displayStudents(true), "./studentfooter.html");
 });
 
 //listen on port 3000
